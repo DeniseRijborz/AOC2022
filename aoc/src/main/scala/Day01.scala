@@ -22,9 +22,9 @@ object Day01 extends App:
     else if calories.head.isEmpty then
       val newElf = Elves(current.elf + 1, 0)
       calculateCaloriesPerElf(calories.tail, newElf, elves :+ newElf)
-    else sys.error("Unknown command")
+    else sys.error("Unknown input")
 
-  val listElves = calculateCaloriesPerElf(input, Elves(1,0), List())
+  val listElves: List[Elves] = calculateCaloriesPerElf(input, Elves(1,0), List())
 
   val answer1: Int =
     listElves
