@@ -18,7 +18,7 @@ object Day03 extends App:
     s.splitAt(s.length / 2)
 
   def commonLetter(compartments: (String, String)): List[Char] =
-    val letters = compartments._1.sliding(1).toList
+    val letters: List[String] = compartments._1.sliding(1).toList
     for (
       x <- letters;
       y <- x
@@ -36,7 +36,7 @@ object Day03 extends App:
     ) yield y
 
   def commonLetterGroup(compartments: List[String]): List[Char] =
-    val letters = compartments(0).sliding(1).toList.flatten
+    val letters: List[Char] = compartments(0).sliding(1).toList.flatten
     for (
       y <- letters
       if compartments(1).contains(y) && compartments(2).contains(y)
