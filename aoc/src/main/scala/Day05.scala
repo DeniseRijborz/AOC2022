@@ -1,5 +1,4 @@
 import scala.io._
-import scala.util.Try
 
 object Day05 extends App:
 
@@ -18,72 +17,43 @@ object Day05 extends App:
 
   val input: (List[String],List[String]) =
     Source
-      .fromResource(s"input$day.txt").getLines.toList.splitAt(5)
+      .fromResource(s"input$day.txt").getLines.toList.splitAt(10)
+
+  val stacksOfCrates: Map[Int, List[Char]] =
+    Map(1 -> List('R','N','P','G'),
+      2 -> List('T','J','B','L','C','S','V','H'),
+      3 -> List('T','D','B','M','N','L'),
+      4 -> List('R','V','P','S','B'),
+      5 -> List('G','C','Q','S','W','M','V','H'),
+      6 -> List('W','Q','S','C','D','B','J'),
+      7 -> List('F','Q','L'),
+      8 -> List('W','M','H','T','D','L','F','V'),
+      9 -> List('L','P','B','V','M','J','F'))
 
   val instructions: List[Procedure] = input._2.map(parser)
 
-  val crates: List[String] = input._1.dropRight(2)
+  def moveCrate(procedure: List[Procedure], crates: Map[Int, List[Char]], reverse: Boolean): String =
+    if procedure.isEmpty then crates.toSeq.sortBy(_._1).map(x => x._2.last).mkString
+    else
+      val size: Int = procedure.head.move
+      val from: Int = procedure.head.from
+      val to: Int = procedure.head.to
+      val removeFromCrate: List[Char] = crates(from).dropRight(size)
+      val addToCrate: List[Char] =
+        if reverse then crates(to) ++ crates(from).takeRight(size).reverse
+        else crates(to) ++ crates(from).takeRight(size)
+      val updatedCrates: Map[Int, List[Char]] = crates.updated(from, removeFromCrate).updated(to, addToCrate)
+      moveCrate(procedure.tail, updatedCrates, reverse)
 
-  //  val index: List[Int] = input._1.dropRight(1).takeRight(1).map(x => x.trim.toInt)
-  //  println(index)
-
-  def parserCrates(s: String): IndexedSeq[(Int, Char)] =
-    for (
-      (c, i) <- s.zipWithIndex
-    ) yield (i,c)
-
-  val parsedCrates = crates.map(parserCrates).filter(_.nonEmpty).map(x => x.filter(_._2 != ' ')).map(x => x.filter(_._2 != '[')).map(x => x.filter(_._2 != ']'))
-  println(input)
-  println(instructions)
-  println(parsedCrates)
-  val test2 = (0 until parsedCrates.map(_.size).max).map(i => parsedCrates.map(s => Try(s(i)).getOrElse((0,' ')))).map(x => x.filter(_._1 != 0)).flatten.sortBy(_._1)
-
-  def correct(original: (Int, Char)): (Int, Char) =
-    original._1 match
-      case 1 => (1, original._2)
-      case 5 => (2, original._2)
-      case 9 => (3, original._2)
-
-  val test3 = test2.map(correct).groupBy(x => x._1)
-  println(instructions.head)
-  println(test3)
-  println(test3(instructions.head.from)(0))
-  println(test3 + (instructions.head.to -> crates(instructions.head.from)(0)))
-
-  def moveCrate(procedure: List[Procedure], crates: Map[Int,IndexedSeq[(Int,Char)]]) =
-    if procedure.isEmpty then crates
-  //    else
-  //    val newCrate = crates + (procedure.head.to -> crates(instructions.head.from)(0))
-  //    newcrate
-
-  //  def test(l: List[Any]) =
-  //    l match
-  //      case (x,y) =>
-
-  //  println(listCrates)
-  //  println(listCrates(-1 + instructions.head.from).takeRight(1))
-
-  //  def craneOperator(procedure: List[Procedure], crates: List[List[String]]) =
-  //    if procedure.isEmpty then crates
-  //    else
-  //      val intermediate: List[List[String]] = crates(-1 + procedure.head.from).takeRight(procedure.head.move) :+ crates(-1 + procedure.head.to)
-  //      val newCrate = intermediate(-1 + procedure.head.from).dropRight(procedure.head.move)
-
-  //  println(crates.map(parserCrates).filter(_.nonEmpty))
-  //  println(crates.map(x => if x.length > 0 then x.charAt(6)))
-
-  //  def moveCrates(instr: Procedure, crates: String) =
-
-
-  val answer1: Int =
-    5
+  val answer1: String =
+    moveCrate(instructions, stacksOfCrates, true)
 
   println(s"Answer day $day part 1: ${answer1} [${System.currentTimeMillis - start1}ms]")
 
   val start2: Long =
     System.currentTimeMillis
 
-  val answer2: Int =
-    5
+  val answer2: String =
+    moveCrate(instructions, stacksOfCrates, false)
 
   println(s"Answer day $day part 2: ${answer2} [${System.currentTimeMillis - start2}ms]")
