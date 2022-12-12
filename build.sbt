@@ -1,21 +1,11 @@
-lazy val root =
-  project
-    .in(file("."))
-    .settings( scalaVersion := "3.2.1"
-      , name         := "aoc"
-      , version      := "0.1.0"
-      , libraryDependencies ++= Seq(
-        "org.scalatest"  %% "scalatest"  % "3.2.14" % "test"
-      )
-    )
-
-scalacOptions ++= Seq(
-  "-encoding", "utf8",
-  "-feature",
-  "-language:implicitConversions",
-  "-language:existentials",
-  "-unchecked",
-  "-Werror",
-  "-deprecation",
-  //  "-explain",
+val TestDependencies = Seq(
+  "org.scalatest"  %% "scalatest"  % "3.2.14" % "test"
 )
+
+lazy val aoc = project
+  .in(file("aoc"))
+  .settings( name           := "aoc"
+    , version              := "0.1.0"
+    , scalaVersion         := "3.2.0"
+    , libraryDependencies ++= TestDependencies
+  )
