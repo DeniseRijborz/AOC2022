@@ -14,7 +14,7 @@ object Day08 extends App:
 
   val size: Int = input.head.length
 
-  val grid = List.range(0, size).flatMap(x => List.range(0, size).map(y => (x, y)))
+  val grid: List[(Int,Int)] = List.range(0, size).flatMap(x => List.range(0, size).map(y => (x, y)))
   val leftRight: List[List[(Int,(Int,Int))]] = (input.flatten zip grid).grouped(size).toList
   val upDown: List[List[(Int,(Int,Int))]] = (input.flatten zip grid).grouped(size).toList.transpose
   val rightLeft: List[List[(Int,(Int,Int))]] = (input.flatten zip grid).grouped(size).toList.map(x => x.reverse).reverse
@@ -27,11 +27,29 @@ object Day08 extends App:
       visibleTrees(trees.tail, newHighestTrees, trees.head._1)
     else visibleTrees(trees.tail, highestTrees, currentHighest)
 
-  val highTrees1 = leftRight.map(x => visibleTrees(x, List(), -1)).flatten
-  val highTrees2 = upDown.map(x => visibleTrees(x, List(), -1)).flatten
-  val highTrees3 = rightLeft.map(x => visibleTrees(x, List(), -1)).flatten
-  val highTrees4 = downUp.map(x => visibleTrees(x, List(), -1)).flatten
+  val highTrees1: List[(Int,(Int,Int))] = leftRight.map(x => visibleTrees(x, List(), -1)).flatten
+  val highTrees2: List[(Int,(Int,Int))] = upDown.map(x => visibleTrees(x, List(), -1)).flatten
+  val highTrees3: List[(Int,(Int,Int))] = rightLeft.map(x => visibleTrees(x, List(), -1)).flatten
+  val highTrees4: List[(Int,(Int,Int))] = downUp.map(x => visibleTrees(x, List(), -1)).flatten
   val highTrees: List[(Int,(Int,Int))] = highTrees1.concat(highTrees2).concat(highTrees3).concat(highTrees4)
+
+  val gridPart2: List[(Int, Int)] = leftRight.flatten.map(x => x._2)
+  val coordinates: List[Int] = leftRight.flatten.map(x => x._1)
+  val inputPart2: Map[(Int, Int), Int] = (gridPart2 zip coordinates).toMap
+
+  def scenicScore(tree: (Int,Int)): Int =
+    val pathLeft: List[Int] = (0 to tree._1).map(x => inputPart2(x,tree._2)).toList.reverse
+    val pathRight: List[Int] = (tree._1 until size).map(x => inputPart2(x,tree._2)).toList
+    val pathTop: List[Int] = (0 to tree._2).map(y => inputPart2(tree._1,y)).toList.reverse
+    val pathBottom: List[Int] = (tree._2 until size).map(y => inputPart2(tree._1,y)).toList
+    def score(todo: List[Int]): Int =
+      val index = todo.tail.indexWhere(_ >= todo.head)
+      if index != -1 then index + 1 else todo.tail.length
+    val vl = score(pathLeft)
+    val vr = score(pathRight)
+    val vt = score(pathTop)
+    val vb = score(pathBottom)
+    vl * vr * vt * vb
 
   val answer1: Int =
     highTrees.distinct.size
@@ -42,6 +60,6 @@ object Day08 extends App:
     System.currentTimeMillis
 
   val answer2: Int =
-    5
+    inputPart2.keys.map(scenicScore).max
 
   println(s"Answer day $day part 2: ${answer2} [${System.currentTimeMillis - start2}ms]")
