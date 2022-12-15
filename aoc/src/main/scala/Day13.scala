@@ -25,16 +25,18 @@ object Day13 extends App:
 //    println(second)
     if first.isEmpty then true
     else if second.isEmpty then false
-    else if first.head.isDigit && first.tail.head.isDigit && second.head.isDigit && first.slice(0,2).toInt > second.head.asDigit then false
-    else if first.head.isDigit && first.tail.head.isDigit && second.head.isDigit && first.slice(0,2).toInt < second.head.asDigit then true
-    else if second.head.isDigit && second.tail.head.isDigit && first.head.isDigit && second.slice(0,2).toInt > first.head.asDigit then true
-    else if second.head.isDigit && second.tail.head.isDigit && first.head.isDigit && second.slice(0,2).toInt < first.head.asDigit then false
+    else if first.head.isDigit && first.tail.head.isDigit && second.head.isDigit && second.tail.head.isDigit == false && first.slice(0,2).toInt > second.head.asDigit then false
+    else if first.head.isDigit && first.tail.head.isDigit && second.head.isDigit && second.tail.head.isDigit == false && first.slice(0,2).toInt < second.head.asDigit then true
+    else if second.head.isDigit && second.tail.head.isDigit && first.head.isDigit && first.tail.head.isDigit == false && second.slice(0,2).toInt > first.head.asDigit then true
+    else if second.head.isDigit && second.tail.head.isDigit && first.head.isDigit && first.tail.head.isDigit == false && second.slice(0,2).toInt < first.head.asDigit then false
     else if first.head.isDigit && second.head.isDigit && first.head.asDigit > second.head.asDigit then false
     else if first.head.isDigit && second.head.isDigit && first.head.asDigit < second.head.asDigit then true
+    else if first.head.isDigit && first.tail.head.isDigit && second.head.isDigit == false && second.head == '[' && second.tail.head == ']' then false
+    else if second.head.isDigit && second.tail.head.isDigit && first.head.isDigit == false && first.head == '[' && first.tail.head == ']' then true
     else if first.head.isDigit && second.head.isDigit == false && second.head == '[' && second.tail.head == ']' then false
     else if second.head.isDigit && first.head.isDigit == false && first.head == '[' && first.tail.head == ']' then true
-    else if second.head.isDigit && first.head.isDigit == false then compare(first.tail,second)
-    else if first.head.isDigit && second.head.isDigit == false then compare(first,second.tail)
+//    else if second.head.isDigit && first.head.isDigit == false then compare(first.tail,second)
+//    else if first.head.isDigit && second.head.isDigit == false then compare(first,second.tail)
     else compare(first.tail, second.tail)
 
 
