@@ -15,38 +15,27 @@ object Day04 extends App:
       case s"${a}-${b},${c}-${d}" => Pairs(a, b, c, d)
       case _ => sys.error("Unknown format")
 
-  val input: List[Pairs] =
+  def range(p: Pairs): (Range, Range) =
+    val range1 = Range.inclusive(p.a.toInt, p.b.toInt)
+    val range2 = Range.inclusive(p.c.toInt, p.d.toInt)
+    (range1, range2)
+
+  val input: List[(Range,Range)] =
     Source
       .fromResource(s"input$day.txt")
       .getLines
       .map(parser)
+      .map(range)
       .toList
 
-  def actualListFirst(pairs: Pairs): IndexedSeq[Int] =
-    for (
-      x <- pairs.a.toInt to pairs.b.toInt
-    ) yield x
+  def contains(range1: Range, range2: Range): Boolean =
+    range1.forall(x => range2.contains(x)) | range2.forall(x => range1.contains(x))
 
-  def actualListSecond(pairs: Pairs): IndexedSeq[Int] =
-    for (
-      y <- pairs.c.toInt to pairs.d.toInt
-    ) yield y
-
-  val first: List[IndexedSeq[Int]] = input.map(actualListFirst)
-  val second: List[IndexedSeq[Int]] = input.map(actualListSecond)
-  val pairs: List[(IndexedSeq[Int],IndexedSeq[Int])] = first.zip(second)
-
-  def contains(p: (IndexedSeq[Int],IndexedSeq[Int])): Boolean =
-    p._1.forall(x => p._2.contains(x)) | p._2.forall(x => p._1.contains(x))
-
-  def overlap(p: (IndexedSeq[Int],IndexedSeq[Int])): IndexedSeq[Boolean] =
-    for (
-      x <- p._1
-      if p._2.contains(x)
-    ) yield true
+  def overlap(range1: Range, range2: Range): Boolean =
+    range1.exists(x => range2.contains(x))
 
   val answer1: Int =
-    pairs.map(contains).count(_ == true)
+    input.map(contains).count(_ == true)
 
   println(s"Answer day $day part 1: ${answer1} [${System.currentTimeMillis - start1}ms]")
 
@@ -54,6 +43,6 @@ object Day04 extends App:
     System.currentTimeMillis
 
   val answer2: Int =
-    pairs.map(overlap).map(x => x.nonEmpty).count(_ == true)
+    input.map(overlap).count(_ == true)
 
   println(s"Answer day $day part 2: ${answer2} [${System.currentTimeMillis - start2}ms]")
