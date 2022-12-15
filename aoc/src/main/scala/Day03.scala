@@ -30,7 +30,7 @@ object Day03 extends App:
       if compartments(1).contains(y) && compartments(2).contains(y)
     ) yield y
 
-  val answer1 =
+  val answer1: Int =
     input
       .map(parser)
       .map(commonLetter)
